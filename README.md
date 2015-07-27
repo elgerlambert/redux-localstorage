@@ -28,7 +28,7 @@ type paths = Void | String | Array<String>
 ```
 If left `undefined` persistState will sync Redux's complete store state with localStorage. Alternatively you may specify which part(s) of your state should be persisted.
 
-**Note:** Currently no support for nested paths. Only "top-level" paths are supported, i.e. state[path]. If your needs are more complex and you require more control over which parts of your store's state should be persisted you can define your own strategy through [config.slicer](#config.slicer)
+**Note:** Currently no support for nested paths. Only "top-level" paths are supported, i.e. state[path]. If your needs are more complex and you require more control over which parts of your store's state should be persisted you can define your own strategy through [config.slicer](#configslicer)
 
 #### config
 #####config.key
