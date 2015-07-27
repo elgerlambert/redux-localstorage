@@ -3,12 +3,12 @@ redux-localstorage
 
 Store enhancer that syncs (a subset) of your Redux store state to localstorage.
 
-##Installation
+## Installation
 ```js
 npm install --save redux-localstorage
 ```
 
-##Usage
+## Usage
 ```js
 import {compose, createStore} from 'redux';
 import persistState from 'redux-localstorage'
@@ -21,7 +21,7 @@ const createPersistentStore = compose(
 const store = createPersistentStore(/*reducer, initialState*/)
 ```
 
-###persistState(paths, config)
+### persistState(paths, config)
 #### paths
 ```js
 type paths = Void | String | Array<String> 
@@ -31,13 +31,13 @@ If left `undefined` persistState will sync Redux's complete store state with loc
 **Note:** Currently no support for nested paths. Only "top-level" paths are supported, i.e. state[path]. If your needs are more complex and you require more control over which parts of your store's state should be persisted you can define your own strategy through [config.slicer](#configslicer)
 
 #### config
-#####config.key
+##### config.key
 ```js
 type config.key = String
 ```
 The localStorage key used to store state. The default value is `redux`.
 
-#####config.slicer
+##### config.slicer
 ```js
 type config.slicer<P> = (paths: P) => (state: Object) => subset: Object
 ```
