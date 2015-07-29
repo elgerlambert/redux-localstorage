@@ -1,4 +1,5 @@
 import getSubset from './getSubset.js'
+import typeOf from './util/typeOf.js'
 
 /**
  * @description
@@ -9,12 +10,14 @@ import getSubset from './getSubset.js'
  * @return {Function} A slicer function, which returns the subset to store when called with Redux's store state.
  */
 export default function createSlicer(paths) {
-  switch (typeof paths) {
-    case 'undefined':
+  switch (typeOf(paths)) {
+    case 'void':
       return (state) => state
     case 'string':
       return (state) => getSubset(state, [paths])
-    default:
+    case 'array':
       return (state) => getSubset(state, paths)
+    default:
+      return console.error('Invalid paths argument, should be of type String, Array or Void')
   }
 }
