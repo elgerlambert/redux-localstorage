@@ -22,14 +22,16 @@ export default function persistState(paths, config) {
 
   return next => (reducer, initialState) => {
     let persistedState
+    let finalInitialState
 
     try {
       persistedState = JSON.parse(localStorage.getItem(cfg.key))
+      finalInitialState = persistedState ? {...initialState, ...persistedState} : initialState
     } catch (e) {
       console.warn('Failed to retrieve initialize state from localStorage:', e)
     }
 
-    const store = next(reducer, {...initialState, ...persistedState})
+    const store = next(reducer, finalInitialState)
     const slicer = cfg.slicer(paths)
 
     store.subscribe(function () {
