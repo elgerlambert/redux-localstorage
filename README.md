@@ -53,3 +53,20 @@ function myCustomSlicer (paths) {
   }
 }
 ```
+
+##### config.dehydrate
+```js
+type config.slicer<P> = (paths: P) => (state: Object) => subset: Object
+```
+Config.slicer allows you to define your own function which will be used to determine which parts should be synced with localStorage. Config.slicer is called with the paths argument supplied to persistState. It should return a function that will be called with the store's state. The return value of that function should be an object that matches the original structure of the store - it's this subset that'll be persisted.
+
+Example:
+```js
+function myCustomSlicer (paths) {
+  return (state) => {
+    let subset = {}
+    /*Custom logic goes here*/
+    return subset
+  }
+}
+```
