@@ -1,5 +1,5 @@
 import {assert} from 'chai'
-import getSubset from '../src/getSubset'
+import getSubset from '../getSubset'
 
 describe('getSubset', () => {
   it('should return an empty object if no paths defined', () => {

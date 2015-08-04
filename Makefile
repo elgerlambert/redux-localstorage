@@ -1,15 +1,23 @@
 BIN=node_modules/.bin
 
+MOCHA_ARGS=	--compilers js:babel/register \
+			--recursive
+
+MOCHA_TARGET=src/__tests__
+
 build:
-	$(BIN)/babel src --out-dir lib
+	$(BIN)/babel src --ignore __tests__ --out-dir lib
 
 clean:
 	rm -rf lib
 
-lint:
-	$(BIN)/eslint src test
-
 test:
-	$(BIN)/mocha --compilers js:babel/register --recursive
+	NODE_ENV=test $(BIN)/mocha $(MOCHA_ARGS) $(MOCHA_TARGET)
 
-.PHONY: build clean lint test
+test-watch:
+	NODE_ENV=test $(BIN)/mocha $(MOCHA_ARGS) -w $(MOCHA_TARGET)
+
+lint:
+	$(BIN)/eslint src
+
+PHONY: build clean test test-watch lint

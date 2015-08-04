@@ -1,5 +1,5 @@
 import {assert} from 'chai'
-import createSlicer from '../src/createSlicer'
+import createSlicer from '../createSlicer'
 
 const state = {
   todos: [

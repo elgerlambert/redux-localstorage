@@ -1,5 +1,5 @@
 import {assert} from 'chai'
-import typeOf from '../../src/util/typeOf'
+import typeOf from '../../util/typeOf'
 
 describe('typeOf', () => {
   it('returns "void" if false-y', () => {
