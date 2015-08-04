@@ -68,3 +68,7 @@ This function receives a single argument (the subset of your store's state about
 ##### config.deserialize
 The default deserialization strategy is JSON.parse. Specifying a deserialize function as part of your config will override this.
 This function receives a single argument (a serialized representation of your persisted state) and should return the data in a format that's expected by your application.
+
+##### config.merge
+During initialization any persisted state is merged with the initialState passed in as an argument to `createStore`.
+The default strategy `extends` the initialState with the persistedState. Override this function if that doesn't work for you.

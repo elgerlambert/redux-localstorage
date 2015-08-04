@@ -1,4 +1,5 @@
 import createSlicer from './createSlicer.js'
+import mergeState from './util/mergeState.js'
 
 /**
  * @description
@@ -19,6 +20,7 @@ import createSlicer from './createSlicer.js'
 export default function persistState(paths, config) {
   const cfg = {
     key: 'redux',
+    merge: mergeState,
     slicer: createSlicer,
     serialize: JSON.stringify,
     deserialize: JSON.parse,
@@ -27,6 +29,7 @@ export default function persistState(paths, config) {
 
   const {
     key,
+    merge,
     slicer,
     serialize,
     deserialize
@@ -38,7 +41,7 @@ export default function persistState(paths, config) {
 
     try {
       persistedState = deserialize(localStorage.getItem(key))
-      finalInitialState = persistedState ? {...initialState, ...persistedState} : initialState
+      finalInitialState = merge(initialState, persistedState)
     } catch (e) {
       console.warn('Failed to retrieve initialize state from localStorage:', e)
     }
