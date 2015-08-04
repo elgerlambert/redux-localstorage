@@ -7,6 +7,9 @@ clean:
 	rm -rf lib
 
 lint:
-	$(BIN)/eslint src
+	$(BIN)/eslint src test
 
-PHONY: build clean lint
+test:
+	$(BIN)/mocha --compilers js:babel/register --recursive
+
+.PHONY: build clean lint test
