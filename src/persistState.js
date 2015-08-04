@@ -9,43 +9,49 @@ import createSlicer from './createSlicer.js'
  * @param {String} [config.key="redux"] String used as localStorage key
  * @param {Function} [config.slicer] (paths) => (state) => subset. A function that returns a subset
  * of store state that should be persisted to localStorage
- * @param {Function} [config.dehydrate] (data) => dehydratedData. A function that allows modification of data
- * before persisting to localStorage
- * @param {Function} [config.hydrate] (data) => hydratedData. A function that allows modification of data
- * after reading from localStorage and before setting to a store's state
+ * @param {Function} [config.serialize=JSON.stringify] (subset) => serializedData. Called just before persisting to
+ * localStorage. Should transform the subset into a format that can be stored.
+ * @param {Function} [config.deserialize=JSON.parse] (persistedData) => subset. Called directly after retrieving
+ * persistedState from localStorage. Should transform the data into the format expected by your application
  *
  * @return {Function} An enhanced store
  */
 export default function persistState(paths, config) {
-  const defaults = {
+  const cfg = {
     key: 'redux',
     slicer: createSlicer,
-    hydrate: data => data,
-    dehydrate: data => data
+    serialize: JSON.stringify,
+    deserialize: JSON.parse,
+    ...config
   }
 
-  const cfg = {...defaults, ...config}
+  const {
+    key,
+    slicer,
+    serialize,
+    deserialize
+  } = cfg
 
   return next => (reducer, initialState) => {
     let persistedState
     let finalInitialState
 
     try {
-      persistedState = cfg.hydrate(JSON.parse(localStorage.getItem(cfg.key)))
+      persistedState = deserialize(localStorage.getItem(key))
       finalInitialState = persistedState ? {...initialState, ...persistedState} : initialState
     } catch (e) {
       console.warn('Failed to retrieve initialize state from localStorage:', e)
     }
 
     const store = next(reducer, finalInitialState)
-    const slicer = cfg.slicer(paths)
+    const slicerFn = slicer(paths)
 
     store.subscribe(function () {
       const state = store.getState()
-      const subset = slicer(state)
+      const subset = slicerFn(state)
 
       try {
-        localStorage.setItem(cfg.key, cfg.dehydrate(JSON.stringify(subset)))
+        localStorage.setItem(key, serialize(subset))
       } catch (e) {
         console.warn('Unable to persist state to localStorage:', e)
       }
