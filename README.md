@@ -19,7 +19,7 @@ import {filter} from 'redux-localstorage/lib/enhancers';
 import persistState from 'redux-localstorage';
 
 const storage = compose(
-  filter('todos'),
+  filter('nested.key'),
   adapter(localStorage)
 );
 
@@ -83,7 +83,7 @@ Through functional composition it's really easy to enhance a storage object. Thi
 ```js
 const storage = compose(
   debounce(1000),
-  filter('todos'),
+  filter(['key', 'another.key']),
   serialization,
   errorHandling,
   adapter(localStorage)
