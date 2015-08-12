@@ -7,6 +7,11 @@
     "prepublish": "make test clean build",
     "test": "make test"
   },
+  "files": [
+    "lib/",
+    "package.json",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/elgerlambert/redux-localstorage.git"
