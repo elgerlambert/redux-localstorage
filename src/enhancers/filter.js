@@ -8,7 +8,9 @@
  *
  * @return {Object} An object that contains the specified keys with truth-y values
  */
-export default function getSubset(obj, paths) {
+export function getSubset(obj, paths) {
+  if (!paths) return obj
+
   let subset = {}
 
   paths.forEach((key) => {
@@ -17,4 +19,19 @@ export default function getSubset(obj, paths) {
   })
 
   return subset
+}
+
+export default function filter(paths) {
+  if (typeof paths === 'string') paths = [paths]
+
+  return (storage) => {
+    function put(key, state, callback) {
+      storage.put(key, getSubset(state, paths), callback)
+    }
+
+    return {
+      ...storage,
+      put
+    }
+  }
 }

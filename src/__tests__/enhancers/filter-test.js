@@ -1,12 +1,11 @@
 import {assert} from 'chai'
-import getSubset from '../getSubset'
+import {getSubset} from '../../enhancers/filter.js'
 
-describe('getSubset', () => {
-  it('should return an empty object if no paths defined', () => {
+describe('filter', () => {
+  it('should return the original object if no paths are defined', () => {
     const obj = {a: 2, b: 3}
-    const paths = []
-    const subset = getSubset(obj, paths)
-    assert.deepEqual(subset, {})
+    const subset = getSubset(obj)
+    assert.deepEqual(subset, obj)
   })
 
   it('should return only the keys defined by the paths', () => {

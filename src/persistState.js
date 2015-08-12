@@ -1,65 +1,77 @@
-import createSlicer from './createSlicer.js'
-import mergeState from './util/mergeState.js'
+import {compose} from 'redux'
+import adapter from './adapters/localStorage'
+import mergeState from './mergeState.js'
+import bufferActions from './bufferActions.js'
+
+const ActionTypes = {
+  INIT: 'redux-localstorage/INIT'
+}
+
+function liftReducer(reducer) {
+  return function liftedReducer(state, action) {
+    return action.type === ActionTypes.INIT
+      ? mergeState(state, action.payload)
+      : reducer(state, action)
+  }
+}
+
+function persistStateMiddleware(store, storage, key) {
+  return (next) => (action) => {
+    next(action)
+
+    if (action.type === ActionTypes.INIT) return
+
+    storage.put(key, store.getState(), function (err) {
+      if (err) console.error('Unable to persist state to localStorage:', err)
+    })
+  }
+}
 
 /**
  * @description
- * persistState is a Store Enhancer that syncs (a subset of) store state to localStorage.
+ * persistState is a Store Enhancer that persists store changes.
  *
- * @param {String|String[]} [paths] Specify keys to sync with localStorage, if left undefined the whole store is persisted
- * @param {Object} [config] Optional config object
- * @param {String} [config.key="redux"] String used as localStorage key
- * @param {Function} [config.slicer] (paths) => (state) => subset. A function that returns a subset
- * of store state that should be persisted to localStorage
- * @param {Function} [config.serialize=JSON.stringify] (subset) => serializedData. Called just before persisting to
- * localStorage. Should transform the subset into a format that can be stored.
- * @param {Function} [config.deserialize=JSON.parse] (persistedData) => subset. Called directly after retrieving
- * persistedState from localStorage. Should transform the data into the format expected by your application
+ * @param {Object} [storage = adapter(localStorage)] Object used to interface with any type of storage back-end.
+ * @param {String} [key = "redux-localstorage"] String used as storage key.
  *
- * @return {Function} An enhanced store
+ * @return {Function} An enhanced store.
  */
-export default function persistState(paths, config) {
-  const cfg = {
-    key: 'redux',
-    merge: mergeState,
-    slicer: createSlicer,
-    serialize: JSON.stringify,
-    deserialize: JSON.parse,
-    ...config
+export default function persistState(storage, key) {
+  key = key || 'redux-localstorage'
+
+  if (typeof storage === 'undefined') {
+    storage = adapter(localStorage)
+  } else if (typeof storage === 'string') {
+    key = storage
+    storage = adapter(localStorage)
   }
 
-  const {
-    key,
-    merge,
-    slicer,
-    serialize,
-    deserialize
-  } = cfg
-
   return next => (reducer, initialState) => {
-    let persistedState
-    let finalInitialState
+    // Check if ActionTypes.INIT is already handled, "lift" reducer if not
+    if (typeof reducer(undefined, { type: ActionTypes.INIT }) !== 'undefined')
+      reducer = liftReducer(reducer)
 
-    try {
-      persistedState = deserialize(localStorage.getItem(key))
-      finalInitialState = merge(initialState, persistedState)
-    } catch (e) {
-      console.warn('Failed to retrieve initialize state from localStorage:', e)
-    }
+    // Apply middleware
+    const store = next(reducer, initialState)
+    const dispatch = compose(
+      bufferActions(),
+      persistStateMiddleware(store, storage, key),
+      store.dispatch
+    )
 
-    const store = next(reducer, finalInitialState)
-    const slicerFn = slicer(paths)
-
-    store.subscribe(function () {
-      const state = store.getState()
-      const subset = slicerFn(state)
-
-      try {
-        localStorage.setItem(key, serialize(subset))
-      } catch (e) {
-        console.warn('Unable to persist state to localStorage:', e)
-      }
+    // Retrieve and dispatch persisted store state
+    storage.get(key, function (err, persistedState) {
+      if (err) console.error('Failed to retrieve initialize state from localStorage:', err)
+      dispatch({
+        type: ActionTypes.INIT,
+        meta: { BUFFER_BUSTER: true },
+        payload: persistedState
+      })
     })
 
-    return store
+    return {
+      ...store,
+      dispatch
+    }
   }
 }

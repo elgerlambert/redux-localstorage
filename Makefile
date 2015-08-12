@@ -11,10 +11,10 @@ build:
 clean:
 	rm -rf lib
 
-test:
+test: lint
 	NODE_ENV=test $(BIN)/mocha $(MOCHA_ARGS) $(MOCHA_TARGET)
 
-test-watch:
+test-watch: lint
 	NODE_ENV=test $(BIN)/mocha $(MOCHA_ARGS) -w $(MOCHA_TARGET)
 
 lint:

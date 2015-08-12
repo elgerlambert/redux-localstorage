@@ -1,9 +1,7 @@
 redux-localstorage
 ==================
 
-Store enhancer that syncs (a subset) of your Redux store state to localstorage.
-
-Redux-localstorage includes support for [immutable collections](#immutable-data). Support for React Native's AsyncStorage is coming; watch this space.
+Store enhancer that persists store state changes when and where you want.
 
 ## Installation
 ```js
@@ -13,78 +11,85 @@ npm install --save redux-localstorage
 ## Usage
 ```js
 import {compose, createStore} from 'redux';
-import persistState from 'redux-localstorage'
+
+import adapter from 'redux-localstorage/lib/adapters/localStorage';
+import {filter} from 'redux-localstorage/lib/enhancers';
+import persistState from 'redux-localstorage';
+
+const storage = compose(
+  filter('todos'),
+  adapter(localStorage)
+);
 
 const createPersistentStore = compose(
-  persistState(/*paths, config*/),
+  persistState(storage, 'my-storage-key'),
   createStore
-)
+);
 
-const store = createPersistentStore(/*reducer, initialState*/)
+const store = createPersistentStore(/*reducer, initialState*/);
 ```
 
-### persistState(paths, config)
-#### paths
+## persistState(storage, key)
+#### storage
 ```js
-type paths = Void | String | Array<String>
+type storage = Object
 ```
-If left `Void`, persistState will sync Redux's complete store state with localStorage. Alternatively you may specify which part(s) of your state should be persisted.
+An object that provides ([enhanced](#enhancers)) methods for data persistence, retrieval and removal as put, get & del. Defaults to adapter(localStorage).
 
-**Note:** Currently no support for nested paths. Only "top-level" paths are supported, i.e. state[path]. If your needs are more complex and you require more control over
-which parts of your store's state should be persisted you can define your own strategy through [config.slicer](#configslicer)
-
-#### config
-##### config.key
+#### key
 ```js
-type config.key = String
+type key = String
 ```
-The localStorage key used to store state. The default value is `redux`.
+The key used to store (and retrieve) persisted state. Defaults to 'redux-localstorage'.
 
-##### config.slicer
-```js
-type config.slicer = (paths: Any) => (state: Collection) => subset: Collection
-```
-Config.slicer allows you to define your own function which will be used to determine which parts should be synced with localStorage. It should look something like this:
-```js
-function myCustomSlicer (paths) {
-  return (state) => {
-    let subset = {}
-    /*Custom logic goes here*/
-    return subset
-  }
-}
-```
-It is called with the paths argument supplied to persistState. It should return a function that will be called with the store's state, which should return a subset that matches the original shape/structure of the store - it's this subset that'll be persisted.
 
-If, for example, you want to dynamically persist parts of your store state based on a user's preference, defining your own `slicer` allows you to do that. Simply add something along the following lines to your customSlicer function:
+## Storage
+Redux-localstorage can be made to work with any storage implementation - *it doesn't even have to be local!* All that is required is that the storage that is passed in exposes the following methods. 
+```js
+storage = {
+  put: function(key, value, callback) {},
+  get: function(key, callback) {},
+  del: function(key, callback) {}
+};
+```
+A number of [adapters](#adapters) are provided to wrap existing storage API's so that they conform to these requirements. But like I said, you can create your own storage object and point these methods to any endpoint you like!
+
+### adapters
+Redux-localstorage currently provides adapters for localStorage, sessionStorage and AsyncStorage. These adapters are very thin wrappers that transform these storage API's so that they meet the necessary requirements.
 
 ```js
-paths.forEach((path) => {
-  if (state[path].persistToLocalStorage)
-    subset[path] = state[path]
-}
+import {compose, createStore} from 'redux';
+import {AsyncStorage} from 'react-native';
+
+import adapter from 'redux-localstorage/lib/adapters/AsyncStorage';
+import persistState from 'redux-localstorage';
+
+const createPersistentStore = compose(
+  persistState(adapter(AsyncStorage), 'my-storage-key'),
+  createStore
+);
 ```
 
-## Immutable Data
-If you're using immutable collections or some other custom collection, redux-localstorage exposes a number of functions that can be overridden by providing the following config options. These allow you to specify your own tranformations based on your needs. If your using ordinary javascript Objects, Arrays or primitives, you shouldn't have to concern yourself with these options.
-
-##### config.serialize
+### enhancers
 ```js
-type config.serialize = (subset: Collection) => serializedData: String
+type enhancer = (Storage) => Storage
 ```
-The default serialization strategy is JSON.stringify. Specifying a serialize function as part of your config will override this.
-This function receives a single argument (the subset of your store's state about to be persisted) and should return a serialized (i.e. stringified) representation thereof. 
-
-##### config.deserialize
+Through functional composition it's really easy to enhance a storage object. This provides a lot of flexibility, allowing for fun stuff like:
 ```js
-type config.deserialize = (serializedData: String) => subset: Collection
-```
-The default deserialization strategy is JSON.parse. Specifying a deserialize function as part of your config will override this.
-This function receives a single argument (a serialized representation of your persisted state) and should return the data in a format that's expected by your application.
+const storage = compose(
+  debounce(1000),
+  filter('todos'),
+  serialization,
+  errorHandling,
+  adapter(localStorage)
+);
 
-##### config.merge
-```js
-type config.merge = (initialState: Collection, persistedState: Collection) => finalInitialState: Collection
+const createPersistentStore = compose(
+  persistState(storage, 'my-storage-key'),
+  createStore
+);
 ```
-During initialization any persisted state is merged with the initialState passed in as an argument to `createStore`.
-The default strategy `extends` the initialState with the persistedState. Override this function if that doesn't work for you. **Note:** this is only required if you want to merge values within an immutable collection. If your values are immutable, but the object that holds them is not, the default strategy should work just fine.
+Check out the [available enhancers](/tree/master/src/enhancers) and [recipes](/tree/master/recipes) to get going and create your own enhancers!
+
+## License
+MIT
