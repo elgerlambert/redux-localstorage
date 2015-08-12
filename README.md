@@ -89,7 +89,7 @@ const createPersistentStore = compose(
   createStore
 );
 ```
-Check out the [available enhancers](/tree/master/src/enhancers) and [recipes](/tree/master/recipes) to get going and create your own enhancers!
+Check out the [available enhancers](/src/enhancers) and [recipes](/recipes) to get going and create your own enhancers!
 
 ## License
 MIT
