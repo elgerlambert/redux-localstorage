@@ -4,7 +4,7 @@
   "description": "Store enhancer that syncs (a subset of) your redux store state to localstorage.",
   "main": "lib/persistState.js",
   "scripts": {
-    "prepublish": "make clean build",
+    "prepublish": "make test clean build",
     "test": "make test"
   },
   "repository": {
