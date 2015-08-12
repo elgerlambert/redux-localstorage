@@ -1,6 +1,6 @@
 {
   "name": "redux-localstorage",
-  "version": "0.4.0",
+  "version": "1.0.0-beta1",
   "description": "Store enhancer that syncs (a subset of) your redux store state to localstorage.",
   "main": "lib/persistState.js",
   "scripts": {
