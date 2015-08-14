@@ -1,6 +1,6 @@
 {
   "name": "redux-localstorage",
-  "version": "1.0.0-beta1",
+  "version": "1.0.0-beta2",
   "description": "Store enhancer that accepts any (enhanced!) storage backend to persist store state changes.",
   "main": "lib/persistState.js",
   "scripts": {
