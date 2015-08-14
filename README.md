@@ -1,7 +1,9 @@
 redux-localstorage
 ==================
 
-Store enhancer that persists store state changes when and where you want.
+Store enhancer that accepts any (enhanced!) storage backend to persist store state changes.
+
+Redux-localstorage provides adapters for localStorage, sessionStorage and AsyncStorage as well as storage enhancers such as `filter` so that you can get going with minimal effort. You can then create your own storage enhancers to meet any other (application specific) need!   
 
 ## Installation
 ```js
