@@ -20,7 +20,7 @@ import persistState from 'redux-localstorage';
 
 const storage = compose(
   filter('nested.key'),
-  adapter(localStorage)
+  adapter(window.localStorage)
 );
 
 const createPersistentStore = compose(
@@ -86,7 +86,7 @@ const storage = compose(
   filter(['key', 'another.key']),
   serialization,
   errorHandling,
-  adapter(localStorage)
+  adapter(window.localStorage)
 );
 
 const createPersistentStore = compose(
