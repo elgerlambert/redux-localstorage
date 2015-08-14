@@ -3,7 +3,7 @@ redux-localstorage
 
 Store enhancer that accepts any (enhanced!) storage backend to persist store state changes.
 
-Redux-localstorage provides adapters for localStorage, sessionStorage and AsyncStorage as well as storage enhancers such as `filter` so that you can get going with minimal effort. You can then create your own storage enhancers to meet any other (application specific) need!   
+Redux-localstorage provides adapters for `localStorage`, `sessionStorage` and `AsyncStorage` as well as storage enhancers such as `filter` so that you can get going with minimal effort. You can then create your own storage enhancers to meet any other (application specific) needs!
 
 ## Installation
 ```js
@@ -54,10 +54,10 @@ storage = {
   del: function(key, callback) {}
 };
 ```
-A number of [adapters](#adapters) are provided to wrap existing storage API's so that they conform to these requirements. But like I said, you can create your own storage object and point these methods to any endpoint you like!
+A number of [adapters](#adapters) are provided to wrap existing storage API's so that they conform to these requirements. But you could create your own storage object and point these methods to any endpoint you like!
 
 ### adapters
-Redux-localstorage currently provides adapters for localStorage, sessionStorage and AsyncStorage. An adapter creates a thin wrapper that transforms a storage API so that it conforms to the stated requirements. The original storage object passed to an adapter can be accessed through `adapted[0]`, this can be useful to access other methods (that aren't exposed by the adapter) in any custom storage enhancer(s) you create.
+Redux-localstorage currently provides adapters for `localStorage`, `sessionStorage` and `AsyncStorage`. An adapter creates a thin wrapper that transforms a storage API so that it conforms to the stated requirements. The original storage object passed to an adapter can be accessed through `adapted[0]`; this provides you access to all the original storage methods when creating a storage enhancer.
 
 ```js
 import {compose, createStore} from 'redux';
