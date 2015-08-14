@@ -32,7 +32,7 @@ const store = createPersistentStore(/*reducer, initialState*/);
 ## persistState(storage, key)
 #### storage
 ```js
-type storage = Object
+type storage = Storage (Object)
 ```
 An object that provides ([enhanced](#enhancers)) methods for data persistence, retrieval and removal as put, get & del. Defaults to adapter(localStorage).
 
@@ -55,7 +55,7 @@ storage = {
 A number of [adapters](#adapters) are provided to wrap existing storage API's so that they conform to these requirements. But like I said, you can create your own storage object and point these methods to any endpoint you like!
 
 ### adapters
-Redux-localstorage currently provides adapters for localStorage, sessionStorage and AsyncStorage. These adapters are very thin wrappers that transform these storage API's so that they meet the necessary requirements.
+Redux-localstorage currently provides adapters for localStorage, sessionStorage and AsyncStorage. An adapter creates a thin wrapper that transforms a storage API so that it conforms to the stated requirements. The original storage object passed to an adapter can be accessed through `adapted[0]`, this can be useful to access other methods (that aren't exposed by the adapter) in any custom storage enhancer(s) you create.
 
 ```js
 import {compose, createStore} from 'redux';
@@ -64,8 +64,11 @@ import {AsyncStorage} from 'react-native';
 import adapter from 'redux-localstorage/lib/adapters/AsyncStorage';
 import persistState from 'redux-localstorage';
 
+const storage = adapter(AsyncStorage)
+// storage[0] === AsyncStorage
+
 const createPersistentStore = compose(
-  persistState(adapter(AsyncStorage), 'my-storage-key'),
+  persistState(storage, 'my-storage-key'),
   createStore
 );
 ```
