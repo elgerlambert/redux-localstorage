@@ -104,6 +104,8 @@ Check out the [available enhancers](/src/enhancers) and [recipes](/recipes) to g
 To rehydrate the store during initialisation the application's initial state is merged (deeply) with any state previously persisted. The default merge strategy should work in most cases. If you do need/want to define your own (e.g. because you're merging Immutable collections), `mergePersistedState` provides an easy way to do so:
 
 ```js
+import persistState, {mergePersistedState} from 'redux-localstorage'
+
 const reducer = compose(
   mergePersistedState(yourCustomMergeFunction),
   combineReducers(reducers)
