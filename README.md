@@ -5,6 +5,10 @@ Store enhancer that accepts any (enhanced!) storage backend to persist store sta
 
 Redux-localstorage provides adapters for `localStorage`, `sessionStorage` and `AsyncStorage` as well as storage enhancers such as `filter` so that you can get going with minimal effort. You can then create your own storage enhancers to meet any other (application specific) needs!
 
+[![license](https://img.shields.io/npm/l/redux-localstorage.svg?style=flat-square)](https://www.npmjs.com/package/redux-localstorage)
+[![npm version](https://img.shields.io/npm/v/redux-localstorage.svg?style=flat-square)](https://www.npmjs.com/package/redux-localstorage)
+[![npm downloads](https://img.shields.io/npm/dm/redux-localstorage.svg?style=flat-square)](https://www.npmjs.com/package/redux-localstorage)
+
 ## Installation
 ```js
 npm install --save redux-localstorage
