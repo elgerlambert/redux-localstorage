@@ -1,13 +1,21 @@
-/**
- * @description
- * mergeState is used during initialisation and simply extends/assigns the
- * initialState with the persistedState. If this doesn't work for you (because
- * you're using immutable collections for example), you can define your own
- * top-level reducer that handles action.type 'redux-localstorage/INIT' and
- * implement your own merge strategy.
- */
+function isObject(obj) {
+  return Object.prototype.toString.call( obj ) === '[object Object]'
+}
+
+function mergeDeepWithoutMutating(target, source) {
+  for (let key in source) {
+    const value = target[key]
+    if (isObject(value)) {
+      target[key] = {...value}
+      mergeDeepWithoutMutating(target[key], source[key])
+    } else {
+      target[key] = source[key]
+    }
+  }
+}
+
 export default function mergeState(initialState, persistedState) {
-  return persistedState
-    ? {...initialState, ...persistedState}
-    : initialState
+  let finalInitialState = {...initialState}
+  mergeDeepWithoutMutating(finalInitialState, persistedState)
+  return finalInitialState
 }

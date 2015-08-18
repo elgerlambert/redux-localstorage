@@ -4,19 +4,11 @@ import mergeState from './mergeState.js'
 import bufferActions from './bufferActions.js'
 
 const ActionTypes = {
-  INIT: 'redux-localstorage/INIT'
-}
-
-function liftReducer(reducer) {
-  return function liftedReducer(state, action) {
-    return action.type === ActionTypes.INIT
-      ? mergeState(state, action.payload)
-      : reducer(state, action)
-  }
+  INIT: '@@redux-localstorage/INIT'
 }
 
 function persistStateMiddleware(store, storage, key) {
-  return (next) => (action) => {
+  return next => action => {
     next(action)
 
     if (action.type === ActionTypes.INIT) return
@@ -24,6 +16,28 @@ function persistStateMiddleware(store, storage, key) {
     storage.put(key, store.getState(), function (err) {
       if (err) console.error('Unable to persist state to localStorage:', err)
     })
+  }
+}
+
+/**
+ * @description
+ * mergePersistedState is a higher order reducer used to initialise
+ * redux-localstorage to rehydrate the store by merging the application's initial
+ * state with any persisted state.
+ *
+ * @param {Function} merge function that merges the initial state and
+ * persisted state and returns the result.
+ */
+export function mergePersistedState(merge) {
+  return next => (state, action) => {
+
+    if (action.type === ActionTypes.INIT) {
+      return action.payload
+        ? merge(state, action.payload)
+        : state
+    }
+
+    return next(state, action)
   }
 }
 
@@ -49,7 +63,7 @@ export default function persistState(storage, key) {
   return next => (reducer, initialState) => {
     // Check if ActionTypes.INIT is already handled, "lift" reducer if not
     if (typeof reducer(undefined, { type: ActionTypes.INIT }) !== 'undefined')
-      reducer = liftReducer(reducer)
+      reducer = mergePersistedState(mergeState)(reducer)
 
     // Apply middleware
     const store = next(reducer, initialState)

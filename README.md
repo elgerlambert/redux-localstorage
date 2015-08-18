@@ -96,5 +96,21 @@ const createPersistentStore = compose(
 ```
 Check out the [available enhancers](/src/enhancers) and [recipes](/recipes) to get going and create your own enhancers!
 
+## mergePersistedState(merge)
+To rehydrate the store during initialisation the application's initial state is merged (deeply) with any state previously persisted. The default merge strategy should work in most cases. If you do need/want to define your own (e.g. because you're merging Immutable collections), `mergePersistedState` provides an easy way to do so:
+
+```js
+const reducer = compose(
+  mergePersistedState(yourCustomMergeFunction),
+  combineReducers(reducers)
+);
+``` 
+
+### merge
+```js
+type merge = (initialState, persistedState) => mergedState
+```
+Function that defines how the persisted state should be merged with the initial state. The `initialState` includes the default values specified by the reducers. 
+
 ## License
 MIT
