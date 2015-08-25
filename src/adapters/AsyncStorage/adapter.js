@@ -6,7 +6,14 @@ export default (storage) => ({
   },
 
   get(key, callback) {
-    JSON.parse(storage.getItem(key, callback))
+    storage.getItem(key, function(err, value) {
+      if (err) return callback(err, null)
+      try {
+        callback(null, JSON.parse(value))
+      } catch (e) {
+        callback(e)
+      }
+    })
   },
 
   del(key, callback) {
