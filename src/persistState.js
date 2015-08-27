@@ -3,8 +3,8 @@ import adapter from './adapters/localStorage'
 import mergeState from './mergeState.js'
 import bufferActions from './bufferActions.js'
 
-const ActionTypes = {
-  INIT: '@@redux-localstorage/INIT'
+export const ActionTypes = {
+  INIT: 'redux-localstorage/INIT'
 }
 
 function persistStateMiddleware(store, storage, key) {
@@ -30,12 +30,8 @@ function persistStateMiddleware(store, storage, key) {
  */
 export function mergePersistedState(merge) {
   return next => (state, action) => {
-
-    if (action.type === ActionTypes.INIT) {
-      return action.payload
-        ? merge(state, action.payload)
-        : state
-    }
+    if (action.type === ActionTypes.INIT && action.payload)
+      state = merge(state, action.payload)
 
     return next(state, action)
   }

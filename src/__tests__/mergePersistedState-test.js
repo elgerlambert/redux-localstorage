@@ -29,7 +29,7 @@ describe('mergePersistedState', () => {
 
     let {mergePersistedState} = require('../persistState.js')
 
-    reducer = mergePersistedState(mergeState)()
+    reducer = mergePersistedState(mergeState)(state => state)
   })
 
   after(function () {
