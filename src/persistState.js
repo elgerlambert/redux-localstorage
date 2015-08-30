@@ -42,7 +42,6 @@ export default function persistState(storage, key) {
       if (err) console.error('Failed to retrieve initialize state from localStorage:', err)
       dispatch({
         type: actionTypes.INIT,
-        meta: { BUFFER_BUSTER: true },
         payload: persistedState
       })
     })
