@@ -21,5 +21,7 @@ export default function bufferActions() {
     } else {
       queue.push(action)
     }
+
+    return action
   }
 }

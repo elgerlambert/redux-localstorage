@@ -1,13 +1,20 @@
 import actionTypes from './actionTypes.js'
 
 export default function persistStateMiddleware(store, storage, key) {
-  return next => action => {
-    next(action)
+  key = key || 'redux-localstorage'
 
-    if (action.type === actionTypes.INIT) return
-
+  function persistState() {
     storage.put(key, store.getState(), function (err) {
       if (err) console.error('Unable to persist state to localStorage:', err)
     })
+  }
+
+  return next => action => {
+    next(action)
+
+    if (action.type !== actionTypes.INIT)
+      persistState()
+
+    return action
   }
 }
