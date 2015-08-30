@@ -1,9 +1,10 @@
-import mockery from 'mockery'
 import {assert} from 'chai'
-import mergeState from '../mergeState.js'
+import actionTypes from '../actionTypes.js'
+import mergePersistedState from '../mergePersistedState.js'
 
 describe('mergePersistedState', () => {
-  let reducer, action
+  let action
+  let reducer = mergePersistedState()(state => state)
   let initialState = {
     a: 1,
     b: 2,
@@ -18,26 +19,8 @@ describe('mergePersistedState', () => {
     d: false
   }
 
-  before(function () {
-    mockery.enable({
-      warnOnReplace: false,
-      warnOnUnregistered: false,
-      useCleanCache: true
-    })
-
-    mockery.registerMock('redux', {})
-
-    let {mergePersistedState} = require('../persistState.js')
-
-    reducer = mergePersistedState(mergeState)(state => state)
-  })
-
-  after(function () {
-    mockery.disable()
-  })
-
   beforeEach(function () {
-    action = { type: '@@redux-localstorage/INIT' }
+    action = { type: actionTypes.INIT }
   })
 
   it('returns "undefined" if neither initial- or persistedState is defined', () => {

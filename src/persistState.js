@@ -1,41 +1,9 @@
 import {compose} from 'redux'
-import adapter from './adapters/localStorage'
-import mergeState from './mergeState.js'
+import persistStateMiddleware from './persistStateMiddleware.js'
+import mergePersistedState from './mergePersistedState.js'
 import bufferActions from './bufferActions.js'
-
-export const ActionTypes = {
-  INIT: 'redux-localstorage/INIT'
-}
-
-function persistStateMiddleware(store, storage, key) {
-  return next => action => {
-    next(action)
-
-    if (action.type === ActionTypes.INIT) return
-
-    storage.put(key, store.getState(), function (err) {
-      if (err) console.error('Unable to persist state to localStorage:', err)
-    })
-  }
-}
-
-/**
- * @description
- * mergePersistedState is a higher order reducer used to initialise
- * redux-localstorage to rehydrate the store by merging the application's initial
- * state with any persisted state.
- *
- * @param {Function} merge function that merges the initial state and
- * persisted state and returns the result.
- */
-export function mergePersistedState(merge) {
-  return next => (state, action) => {
-    if (action.type === ActionTypes.INIT && action.payload)
-      state = merge(state, action.payload)
-
-    return next(state, action)
-  }
-}
+import actionTypes from './actionTypes.js'
+import adapter from './adapters/localStorage'
 
 /**
  * @description
@@ -57,9 +25,9 @@ export default function persistState(storage, key) {
   }
 
   return next => (reducer, initialState) => {
-    // Check if ActionTypes.INIT is already handled, "lift" reducer if not
-    if (typeof reducer(undefined, { type: ActionTypes.INIT }) !== 'undefined')
-      reducer = mergePersistedState(mergeState)(reducer)
+    // Check if actionTypes.INIT is already handled, "lift" reducer if not
+    if (typeof reducer(undefined, { type: actionTypes.INIT }) !== 'undefined')
+      reducer = mergePersistedState()(reducer)
 
     // Apply middleware
     const store = next(reducer, initialState)
@@ -73,7 +41,7 @@ export default function persistState(storage, key) {
     storage.get(key, function (err, persistedState) {
       if (err) console.error('Failed to retrieve initialize state from localStorage:', err)
       dispatch({
-        type: ActionTypes.INIT,
+        type: actionTypes.INIT,
         meta: { BUFFER_BUSTER: true },
         payload: persistedState
       })
