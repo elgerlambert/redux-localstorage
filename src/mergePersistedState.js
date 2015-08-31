@@ -1,25 +1,27 @@
-import actionTypes from './actionTypes.js'
+import actionTypes from './actionTypes.js';
 
 function isObject(obj) {
-  return Object.prototype.toString.call( obj ) === '[object Object]'
+  return Object.prototype.toString.call( obj ) === '[object Object]';
 }
 
 function mergeDeepWithoutMutating(target, source) {
-  for (let key in source) {
-    const value = target[key]
+  const hasOwn = source.hasOwnProperty;
+  for (const key in source) {
+    if (!hasOwn(key)) return;
+    const value = target[key];
     if (isObject(value)) {
-      target[key] = {...value}
-      mergeDeepWithoutMutating(target[key], source[key])
+      target[key] = {...value};
+      mergeDeepWithoutMutating(target[key], source[key]);
     } else {
-      target[key] = source[key]
+      target[key] = source[key];
     }
   }
 }
 
 function mergeState(initialState, persistedState) {
-  let finalInitialState = {...initialState}
-  mergeDeepWithoutMutating(finalInitialState, persistedState)
-  return finalInitialState
+  const finalInitialState = {...initialState};
+  mergeDeepWithoutMutating(finalInitialState, persistedState);
+  return finalInitialState;
 }
 
 /**
@@ -28,14 +30,17 @@ function mergeState(initialState, persistedState) {
  * redux-localstorage to rehydrate the store by merging the application's initial
  * state with any persisted state.
  *
- * @param {Function} merge function that merges the initial state and
+ * @param {Function} [merge = mergeState] Function that merges the initial state and
  * persisted state and returns the result.
+ *
+ * @returns {Object} The new store state after passing through all reducers.
  */
 export default function mergePersistedState(merge = mergeState) {
   return next => (state, action) => {
-    if (action.type === actionTypes.INIT && action.payload)
-      state = merge(state, action.payload)
+    const finalState = action.type === actionTypes.INIT && action.payload
+      ? merge(state, action.payload)
+      : state;
 
-    return next(state, action)
-  }
+    return next(finalState, action);
+  };
 }

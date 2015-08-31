@@ -53,9 +53,9 @@ The key used to store (and retrieve) persisted state. Defaults to 'redux-localst
 Redux-localstorage can be made to work with any storage implementation - *it doesn't even have to be local!* All that is required is that the storage that is passed in exposes the following methods. 
 ```js
 storage = {
-  put: function(key, value, callback) {},
-  get: function(key, callback) {},
-  del: function(key, callback) {}
+  put(key, value, callback) {},
+  get(key, callback) {},
+  del(key, callback) {}
 };
 ```
 A number of [adapters](#adapters) are provided to wrap existing storage API's so that they conform to these requirements. But you could create your own storage object and point these methods to any endpoint you like!
@@ -70,7 +70,7 @@ import {AsyncStorage} from 'react-native';
 import adapter from 'redux-localstorage/lib/adapters/AsyncStorage';
 import persistState from 'redux-localstorage';
 
-const storage = adapter(AsyncStorage)
+const storage = adapter(AsyncStorage);
 // storage[0] === AsyncStorage
 
 const createPersistentStore = compose(
@@ -104,7 +104,7 @@ Check out the [available enhancers](/src/enhancers) and [recipes](/recipes) to g
 To rehydrate the store during initialisation the application's initial state is merged (deeply) with any state previously persisted. The default merge strategy should work in most cases. If you do need/want to define your own (e.g. because you're merging Immutable collections), `mergePersistedState` provides an easy way to do so:
 
 ```js
-import persistState, {mergePersistedState} from 'redux-localstorage'
+import persistState, {mergePersistedState} from 'redux-localstorage';
 
 const reducer = compose(
   mergePersistedState(yourCustomMergeFunction),

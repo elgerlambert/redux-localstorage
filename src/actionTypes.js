@@ -1,3 +1,3 @@
 export default {
-  INIT: 'redux-localstorage/INIT'
-}
+  INIT: 'redux-localstorage/INIT',
+};

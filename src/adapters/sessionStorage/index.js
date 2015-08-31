@@ -1,1 +1,1 @@
-export {default} from '../localStorage/adapter.js'
+export {default} from '../localStorage/adapter.js';

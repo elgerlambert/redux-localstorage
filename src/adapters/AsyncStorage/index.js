@@ -1,1 +1,1 @@
-export {default} from './adapter.js'
+export {default} from './adapter.js';

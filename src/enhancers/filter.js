@@ -1,7 +1,7 @@
 function hasValue(value) {
   return !!value
     || value === 0
-    || value === false
+    || value === false;
 }
 
 /**
@@ -12,50 +12,52 @@ function hasValue(value) {
  * @param {Object} obj The object from which to create a subset.
  * @param {String[]} paths An array of paths e.g. ['deeply.nested.key'], that should be included in the subset.
  *
- * @return {Object} An object that contains only the specified paths if they hold something of value.
+ * @returns {Object} An object that contains only the specified paths if they hold something of value.
  */
 export function getSubset(obj, paths) {
-  if (!paths) return obj
+  if (!paths) return obj;
 
-  let subset = {}
+  const subset = {};
 
-  paths.forEach((path) => {
-    const keys = path.split('.')
-    const length = keys.length
-    const lastIndex = length - 1
+  paths.forEach(path => {
+    const keys = path.split('.');
+    const length = keys.length;
+    const lastIndex = length - 1;
 
-    let index = 0
-    let value = obj
-    let nested = subset
+    let index = 0;
+    let value = obj;
+    let nested = subset;
 
     // Retrieve value specified by path
     while (value && index < length) {
-      value = value[keys[index++]]
+      value = value[keys[index++]];
     }
 
     // Add to subset if the specified path is defined and hasValue
     if (index === length && hasValue(value)) {
       keys.forEach((key, i) => {
         if (i === lastIndex) {
-          nested[key] = value
+          nested[key] = value;
         } else if (!nested[key]) {
-          nested[key] = {}
+          nested[key] = {};
         }
-        nested = nested[key]
-      })
+        nested = nested[key];
+      });
     }
-  })
+  });
 
-  return subset
+  return subset;
 }
 
 export default function filter(paths) {
-  if (typeof paths === 'string') paths = [paths]
+  const finalPaths = typeof paths === 'string'
+    ? [paths]
+    : paths;
 
   return (storage) => ({
     ...storage,
     put: (key, state, callback) => {
-      storage.put(key, getSubset(state, paths), callback)
-    }
-  })
+      storage.put(key, getSubset(state, finalPaths), callback);
+    },
+  });
 }

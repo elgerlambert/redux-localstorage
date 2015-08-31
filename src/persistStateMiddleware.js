@@ -1,20 +1,19 @@
-import actionTypes from './actionTypes.js'
+import actionTypes from './actionTypes.js';
 
-export default function persistStateMiddleware(store, storage, key) {
-  key = key || 'redux-localstorage'
-
+export default function persistStateMiddleware(store, storage, key = 'redux-localstorage') {
   function persistState() {
-    storage.put(key, store.getState(), function (err) {
-      if (err) console.error('Unable to persist state to localStorage:', err)
-    })
+    storage.put(key, store.getState(), err => {
+      if (err) console.error('Unable to persist state to localStorage:', err); // eslint-disable-line no-console
+    });
   }
 
   return next => action => {
-    next(action)
+    next(action);
 
-    if (action.type !== actionTypes.INIT)
-      persistState()
+    if (action.type !== actionTypes.INIT) {
+      persistState();
+    }
 
-    return action
-  }
+    return action;
+  };
 }
