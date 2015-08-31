@@ -2,7 +2,11 @@ export default (storage) => ({
   0: storage,
 
   put(key, value, callback) {
-    storage.setItem(key, JSON.stringify(value), callback);
+    try {
+      storage.setItem(key, JSON.stringify(value), callback);
+    } catch (e) {
+      callback(e);
+    }
   },
 
   get(key, callback) {
