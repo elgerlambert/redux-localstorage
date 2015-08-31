@@ -40,7 +40,7 @@ export default function persistState(storage = adapter(localStorage), key = 'red
 
     // Retrieve and dispatch persisted store state
     finalStorage.get(finalKey, (err, persistedState) => {
-      if (err) console.error('Failed to retrieve initialize state from localStorage:', err); // eslint-disable-line no-console
+      if (err) console.error('Failed to retrieve persisted state from storage:', err); // eslint-disable-line no-console
       dispatch({
         type: actionTypes.INIT,
         payload: persistedState,
