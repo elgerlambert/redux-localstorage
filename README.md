@@ -3,7 +3,7 @@ redux-localstorage
 
 Unopinionated store enhancer that persists state changes (locally).
 
-Similarly to redux, redux-localstorage has a small API footprint yet provides great flexibility by embracing functional composition. Through functional composition you can [enhance](#enhancers) your persistence layer of [choice](#storage-1) to meet your specific needs!
+Similarly to redux, redux-localstorage has a small API footprint yet provides great flexibility by embracing functional composition. Through functional composition you can [enhance](#enhancers) your [persistence layer of choice](#storage-1) to meet your specific needs!
 
 [![license](https://img.shields.io/npm/l/redux-localstorage.svg?style=flat-square)](https://www.npmjs.com/package/redux-localstorage)
 [![npm version](https://img.shields.io/npm/v/redux-localstorage.svg?style=flat-square)](https://www.npmjs.com/package/redux-localstorage)
@@ -20,12 +20,9 @@ import {compose, createStore} from 'redux';
 
 import adapter from 'redux-localstorage/lib/adapters/localStorage';
 import persistState from 'redux-localstorage';
-// import your storage enhancers of choice
-import debounce from 'redux-localstorage-debounce';
 import filter from 'redux-localstorage-filter';
 
 const storage = compose(
-  debounce(100),
   filter('nested.key')
 )(adapter(window.localStorage));
 
@@ -88,9 +85,8 @@ Through functional composition it's really easy to enhance a storage object. Thi
 const storage = compose(
   debounce(100),
   filter(['key', 'another.key']),
-  serialization,
+  yourOwnCustom(enhancer)
   errorHandling,
-  yourCustom(enhancer)
 )(adapter(window.localStorage));
 
 const createPersistentStore = compose(
