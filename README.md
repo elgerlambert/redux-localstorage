@@ -19,13 +19,16 @@ npm install --save redux-localstorage
 import {compose, createStore} from 'redux';
 
 import adapter from 'redux-localstorage/lib/adapters/localStorage';
-import {filter} from 'redux-localstorage/lib/enhancers';
 import persistState from 'redux-localstorage';
 
+// import your storage enhancers of choice
+import debounce from 'redux-localstorage-debounce';
+import filter from 'redux-localstorage-filter';
+
 const storage = compose(
+  debounce(100),
   filter('nested.key'),
-  adapter(window.localStorage)
-);
+)(adapter(window.localStorage));
 
 const createPersistentStore = compose(
   persistState(storage, 'my-storage-key'),
