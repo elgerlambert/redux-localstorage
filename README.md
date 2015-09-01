@@ -1,9 +1,9 @@
 redux-localstorage
 ==================
 
-Store enhancer that accepts any ([enhanced!](#enhancers)) storage backend to persist store state changes.
+Unopinionated store enhancer that persists state changes (locally).
 
-Redux-localstorage provides adapters for `localStorage`, `sessionStorage` and `AsyncStorage` as well as storage enhancers such as `filter` so that you can get going with minimal effort. You can then create your own storage enhancers to meet any other (application specific) needs!
+Similarly to redux, redux-localstorage has a small API footprint yet provides great flexibility by embracing functional composition. Through functional composition you can [enhance](#enhancers) your persistence layer of [choice](#storage-1) to meet your specific needs!
 
 [![license](https://img.shields.io/npm/l/redux-localstorage.svg?style=flat-square)](https://www.npmjs.com/package/redux-localstorage)
 [![npm version](https://img.shields.io/npm/v/redux-localstorage.svg?style=flat-square)](https://www.npmjs.com/package/redux-localstorage)
@@ -14,13 +14,12 @@ Redux-localstorage provides adapters for `localStorage`, `sessionStorage` and `A
 npm install --save redux-localstorage
 ```
 
-## Usage
+## The Gist
 ```js
 import {compose, createStore} from 'redux';
 
 import adapter from 'redux-localstorage/lib/adapters/localStorage';
 import persistState from 'redux-localstorage';
-
 // import your storage enhancers of choice
 import debounce from 'redux-localstorage-debounce';
 import filter from 'redux-localstorage-filter';
@@ -28,7 +27,8 @@ import filter from 'redux-localstorage-filter';
 const storage = compose(
   debounce(100),
   filter('nested.key'),
-)(adapter(window.localStorage));
+  adapter(window.localStorage)
+);
 
 const createPersistentStore = compose(
   persistState(storage, 'my-storage-key'),
@@ -89,10 +89,11 @@ type enhancer = (Storage) => Storage
 Through functional composition it's really easy to enhance a storage object. This provides a lot of flexibility, allowing for fun stuff like:
 ```js
 const storage = compose(
-  debounce(1000),
+  debounce(100),
   filter(['key', 'another.key']),
   serialization,
   errorHandling,
+  yourCustom(enhancer),
   adapter(window.localStorage)
 );
 
@@ -101,7 +102,7 @@ const createPersistentStore = compose(
   createStore
 );
 ```
-Check out the [available enhancers](/src/enhancers) and [recipes](/recipes) to get going and create your own enhancers!
+Check out the [wiki](https://github.com/elgerlambert/redux-localstorage/wiki) for a list of available storage enhancers and don't forget to add your own if you publish any!
 
 ## mergePersistedState(merge)
 To rehydrate the store during initialisation the application's initial state is merged (deeply) with any state previously persisted. The default merge strategy should work in most cases. If you do need/want to define your own (e.g. because you're merging Immutable collections), `mergePersistedState` provides an easy way to do so:
