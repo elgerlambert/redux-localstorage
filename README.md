@@ -26,14 +26,12 @@ import filter from 'redux-localstorage-filter';
 
 const storage = compose(
   debounce(100),
-  filter('nested.key'),
-  adapter(window.localStorage)
-);
+  filter('nested.key')
+)(adapter(window.localStorage));
 
 const createPersistentStore = compose(
-  persistState(storage, 'my-storage-key'),
-  createStore
-);
+  persistState(storage, 'my-storage-key')
+)(createStore);
 
 const store = createPersistentStore(/*reducer, initialState*/);
 ```
@@ -77,9 +75,8 @@ const storage = adapter(AsyncStorage);
 // storage[0] === AsyncStorage
 
 const createPersistentStore = compose(
-  persistState(storage, 'my-storage-key'),
-  createStore
-);
+  persistState(storage, 'my-storage-key')
+)(createStore);
 ```
 
 ### enhancers
@@ -93,14 +90,12 @@ const storage = compose(
   filter(['key', 'another.key']),
   serialization,
   errorHandling,
-  yourCustom(enhancer),
-  adapter(window.localStorage)
-);
+  yourCustom(enhancer)
+)(adapter(window.localStorage));
 
 const createPersistentStore = compose(
-  persistState(storage, 'my-storage-key'),
-  createStore
-);
+  persistState(storage, 'my-storage-key')
+)(createStore);
 ```
 Check out the [wiki](https://github.com/elgerlambert/redux-localstorage/wiki) for a list of available storage enhancers and don't forget to add your own if you publish any!
 
@@ -110,10 +105,9 @@ To rehydrate the store during initialisation the application's initial state is 
 ```js
 import persistState, {mergePersistedState} from 'redux-localstorage';
 
-const reducer = compose(
-  mergePersistedState(yourCustomMergeFunction),
-  combineReducers(reducers)
-);
+const finalReducer = compose(
+  mergePersistedState(yourCustomMergeFunction)
+)(rootReducer);
 ``` 
 
 ### merge
