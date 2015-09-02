@@ -16,9 +16,8 @@ import {compose, createStore} from 'redux';
 import persistState from 'redux-localstorage'
 
 const createPersistentStore = compose(
-  persistState(/*paths, config*/),
-  createStore
-)
+  persistState(/*paths, config*/)
+)(createStore)
 
 const store = createPersistentStore(/*reducer, initialState*/)
 ```
