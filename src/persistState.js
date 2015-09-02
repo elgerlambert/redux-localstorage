@@ -1,4 +1,3 @@
-import {compose} from 'redux';
 import persistStateMiddleware from './persistStateMiddleware.js';
 import mergePersistedState from './mergePersistedState.js';
 import bufferActions from './bufferActions.js';
@@ -32,11 +31,7 @@ export default function persistState(storage = adapter(localStorage), key = 'red
 
     // Apply middleware
     const store = next(finalReducer, initialState);
-    const dispatch = compose(
-      bufferActions(),
-      persistStateMiddleware(store, finalStorage, finalKey),
-      store.dispatch
-    );
+    const dispatch = bufferActions()(persistStateMiddleware(store, finalStorage, finalKey)(store.dispatch));
 
     // Retrieve and dispatch persisted store state
     finalStorage.get(finalKey, (err, persistedState) => {
