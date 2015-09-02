@@ -5,15 +5,16 @@ function isObject(obj) {
 }
 
 function mergeDeepWithoutMutating(target, source) {
-  const hasOwn = source.hasOwnProperty;
+  const hasOwnProperty = Object.prototype.hasOwnProperty;
   for (const key in source) {
-    if (!hasOwn(key)) return;
-    const value = target[key];
-    if (isObject(value)) {
-      target[key] = {...value};
-      mergeDeepWithoutMutating(target[key], source[key]);
-    } else {
-      target[key] = source[key];
+    if (hasOwnProperty.call(source, key)) {
+      const value = target[key];
+      if (isObject(value)) {
+        target[key] = {...value};
+        mergeDeepWithoutMutating(target[key], source[key]);
+      } else {
+        target[key] = source[key];
+      }
     }
   }
 }
