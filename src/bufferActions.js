@@ -6,8 +6,8 @@ import actionTypes from './actionTypes.js';
  * any queued actions in the order they were originally dispatched.
  */
 export default function bufferActions() {
-  const queue = [];
   let buffer = true;
+  let queue = [];
 
   return next => action => {
     if (!buffer) return next(action);
@@ -18,6 +18,7 @@ export default function bufferActions() {
       queue.forEach(queuedAction => {
         next(queuedAction);
       });
+      queue = null;
     } else {
       queue.push(action);
     }
