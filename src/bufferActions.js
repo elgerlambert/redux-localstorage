@@ -12,7 +12,7 @@ export default function bufferActions() {
   return next => action => {
     if (!buffer) return next(action);
 
-    if (actionTypes.INIT) {
+    if (action.type === actionTypes.INIT) {
       buffer = false;
       next(action);
       queue.forEach(queuedAction => {
