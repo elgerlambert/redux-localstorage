@@ -1,5 +1,4 @@
 import persistStateMiddleware from './persistStateMiddleware.js';
-import mergePersistedState from './mergePersistedState.js';
 import bufferActions from './bufferActions.js';
 import actionTypes from './actionTypes.js';
 import adapter from './adapters/localStorage';
@@ -24,11 +23,6 @@ export default function persistState(storage = adapter(localStorage), key = 'red
     : storage;
 
   return next => (reducer, initialState) => {
-    // Check if actionTypes.INIT is already handled, "lift" reducer if not
-    const finalReducer = typeof reducer(undefined, { type: actionTypes.INIT }) !== 'undefined'
-      ? mergePersistedState()(reducer)
-      : reducer;
-
     // Apply middleware
     const store = next(finalReducer, initialState);
     const dispatch = bufferActions()(persistStateMiddleware(store, finalStorage, finalKey)(store.dispatch));

@@ -7,15 +7,6 @@ describe('mergePersistedState', () => {
   const initialState = {
     a: 1,
     b: 2,
-    nested: {
-      x: 3,
-      deeply: {
-        y: 4,
-        z: 5,
-      },
-    },
-    c: 0,
-    d: false,
   };
 
   let action;
@@ -37,15 +28,5 @@ describe('mergePersistedState', () => {
 
     assert.equal(reducer(initialState, action).a, initialState.a);
     assert.equal(reducer(initialState, action).b, action.payload.b);
-  });
-
-  it('should merge deep without mutating', () => {
-    action.payload = {nested: {deeply: {y: 14}}};
-
-    const newState = reducer(initialState, action);
-
-    assert.deepEqual(newState.nested, {x: 3, deeply: {y: 14, z: 5}});
-    assert.equal(initialState.nested === newState.nested, false);
-    assert.equal(initialState.nested.deeply === newState.nested.deeply, false);
   });
 });
