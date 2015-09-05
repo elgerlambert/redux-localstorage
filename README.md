@@ -38,7 +38,7 @@ const createPersistentStore = compose(
 const store = createPersistentStore(reducer);
 ```
 ## API
-### persistState(storage, key)
+### persistState([storage][, key][, callback])
 #### storage
 ```js
 type storage = Storage (Object)
@@ -50,6 +50,12 @@ An object that provides ([enhanced](#enhancers)) methods for data persistence, r
 type key = String
 ```
 The key used to store (and retrieve) persisted state. Defaults to 'redux-localstorage'.
+
+#### callback
+```js
+type callback = Function
+```
+Called when persistState has finished initializing (after rehydration).
 
 ### mergePersistedState([merge])
 mergePersistedState is a higher order reducer that can be used to rehydrate the store. It takes a function (optional) that defines how the application's initial state should be merged with any persisted state.
