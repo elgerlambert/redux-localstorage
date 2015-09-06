@@ -84,7 +84,7 @@ import {actionTypes} from 'redux-localstorage'
 
 export default function reducer(state = {}, action) {
   if (action.type === actionTypes.INIT) {
-    const persistedState = action.payload[reducer]
+    const persistedState = action.payload['reducer']
     return {...state, ...persistedState}
   }
 //...
