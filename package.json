@@ -1,6 +1,6 @@
 {
   "name": "redux-localstorage",
-  "version": "1.0.0-rc",
+  "version": "1.0.0-rc3",
   "description": "Unopinionated store enhancer that persists state changes (locally).",
   "main": "lib",
   "scripts": {
