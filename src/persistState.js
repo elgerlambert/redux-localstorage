@@ -37,7 +37,7 @@ export default function persistState(storage = defaultStorage, key = defaultKey,
 
   return next => (reducer, initialState) => {
     // Apply middleware
-    const store = next(finalReducer, initialState);
+    const store = next(reducer, initialState);
     const dispatch = bufferActions()(persistStateMiddleware(store, finalStorage, finalKey)(store.dispatch));
 
     // Retrieve and dispatch persisted store state
