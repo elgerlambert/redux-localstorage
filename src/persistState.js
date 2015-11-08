@@ -3,8 +3,11 @@ import bufferActions from './bufferActions.js';
 import actionTypes from './actionTypes.js';
 import adapter from './adapters/localStorage';
 
-const defaultStorage = adapter(localStorage);
 const defaultKey = 'redux-localstorage';
+
+function getDefaultStorage() {
+  return adapter(localStorage);
+}
 
 /**
  * @description
@@ -16,7 +19,7 @@ const defaultKey = 'redux-localstorage';
  *
  * @returns {Function} An enhanced create store function.
  */
-export default function persistState(storage = defaultStorage, key = defaultKey, callback) {
+export default function persistState(storage = getDefaultStorage(), key = defaultKey, callback) {
   let finalStorage = storage;
   let finalKey = key;
   let finalCallback = callback;
@@ -29,10 +32,10 @@ export default function persistState(storage = defaultStorage, key = defaultKey,
 
   if (typeof storage === 'string') {
     finalKey = storage;
-    finalStorage = defaultStorage;
+    finalStorage = getDefaultStorage();
   } else if (typeof storage === 'function') {
     finalCallback = storage;
-    finalStorage = defaultStorage;
+    finalStorage = getDefaultStorage();
   }
 
   return next => (reducer, initialState) => {
