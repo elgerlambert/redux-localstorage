@@ -8,12 +8,12 @@ export default function persistStateMiddleware(store, storage, key = 'redux-loca
   }
 
   return next => action => {
-    next(action);
+    const resultAction = next(action);
 
     if (action.type !== actionTypes.INIT) {
       persistState();
     }
 
-    return action;
+    return resultAction;
   };
 }
