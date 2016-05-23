@@ -65,7 +65,7 @@ paths.forEach((path) => {
 ```
 
 ## Immutable Data
-If you're using immutable collections or some other custom collection, redux-localstorage exposes a number of functions that can be overridden by providing the following config options. These allow you to specify your own tranformations based on your needs. If your using ordinary javascript Objects, Arrays or primitives, you shouldn't have to concern yourself with these options.
+If you're using immutable collections or some other custom collection, redux-localstorage exposes a number of functions that can be overridden by providing the following config options. These allow you to specify your own transformations based on your needs. If you're using ordinary javascript Objects, Arrays or primitives, you shouldn't have to concern yourself with these options.
 
 ##### config.serialize
 ```js
