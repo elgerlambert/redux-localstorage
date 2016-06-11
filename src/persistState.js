@@ -1,3 +1,4 @@
+import { applyMiddleware } from 'redux';
 import persistStateMiddleware from './persistStateMiddleware.js';
 import bufferActions from './bufferActions.js';
 import actionTypes from './actionTypes.js';
@@ -36,23 +37,25 @@ export default function persistState(storage = getDefaultStorage(), key = defaul
   }
 
   return createStore => (...args) => {
-    // Apply middleware
-    const store = createStore(...args);
-    const dispatch = bufferActions()(persistStateMiddleware(store, finalStorage, finalKey)(store.dispatch));
+    const enhancer = applyMiddleware(
+      bufferActions(),
+      persistStateMiddleware(finalStorage, finalKey)
+    );
+
+    const store = enhancer(createStore)(...args);
 
     // Retrieve and dispatch persisted store state
     finalStorage.get(finalKey, (err, persistedState) => {
       if (err) console.error('Failed to retrieve persisted state from storage:', err); // eslint-disable-line no-console
-      dispatch({
+
+      store.dispatch({
         type: actionTypes.INIT,
         payload: persistedState,
       });
+
       if (finalCallback) finalCallback();
     });
 
-    return {
-      ...store,
-      dispatch,
-    };
+    return store;
   };
 }

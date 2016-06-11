@@ -9,7 +9,7 @@ export default function bufferActions() {
   let buffer = true;
   let queue = [];
 
-  return next => action => {
+  return () => next => action => {
     if (!buffer) return next(action);
 
     if (action.type === actionTypes.INIT) {
