@@ -6,7 +6,7 @@ import adapter from './adapters/localStorage';
 const defaultKey = 'redux-localstorage';
 
 function getDefaultStorage() {
-  return adapter(localStorage);
+  return adapter(window.localStorage);
 }
 
 /**
