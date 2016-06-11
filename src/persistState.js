@@ -4,10 +4,7 @@ import actionTypes from './actionTypes.js';
 import adapter from './adapters/localStorage';
 
 const defaultKey = 'redux-localstorage';
-
-function getDefaultStorage() {
-  return adapter(window.localStorage);
-}
+const getDefaultStorage = () => { adapter(window.localStorage); };
 
 /**
  * @description
