@@ -35,7 +35,12 @@ export default function persistState(paths, config) {
     deserialize
   } = cfg
 
-  return next => (reducer, initialState) => {
+  return next => (reducer, initialState, enhancer) => {
+    if (typeof initialState === 'function' && typeof enhancer === 'undefined') {
+      enhancer = initialState
+      initialState = undefined
+    }
+
     let persistedState
     let finalInitialState
 
@@ -46,7 +51,7 @@ export default function persistState(paths, config) {
       console.warn('Failed to retrieve initialize state from localStorage:', e)
     }
 
-    const store = next(reducer, finalInitialState)
+    const store = next(reducer, finalInitialState, enhancer)
     const slicerFn = slicer(paths)
 
     store.subscribe(function () {
