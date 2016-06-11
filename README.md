@@ -103,7 +103,7 @@ storage = {
 A number of [adapters](#adapters) are provided to wrap existing storage API's so that they conform to these requirements. But you could create your own storage object and point these methods to any endpoint you like!
 
 ### adapters
-Redux-localstorage currently provides adapters for `localStorage`, `sessionStorage` and `AsyncStorage`. An adapter creates a thin wrapper that transforms a storage API so that it conforms to the stated requirements. The original storage object passed to an adapter can be accessed through `adapted[0]`; this provides you access to all the original storage methods when creating a storage enhancer.
+Redux-localstorage currently provides adapters for `localStorage`, `sessionStorage`, `AsyncStorage` and `EncodedLocalStorage` (same as `localStorage` or `sessionStorage` except you can use an encoder/decoder to avoid storing your state in plain text). An adapter creates a thin wrapper that transforms a storage API so that it conforms to the stated requirements. The original storage object passed to an adapter can be accessed through `adapted[0]`; this provides you access to all the original storage methods when creating a storage enhancer.
 
 ```js
 import {AsyncStorage} from 'react-native';
