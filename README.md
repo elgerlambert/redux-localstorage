@@ -15,11 +15,12 @@ npm install --save redux-localstorage
 import {compose, createStore} from 'redux';
 import persistState from 'redux-localstorage'
 
-const createPersistentStore = compose(
-  persistState(/*paths, config*/)
-)(createStore)
+const enhancer = compose(
+  /* [middlewares] */,
+  persistState(/*paths, config*/),
+)
 
-const store = createPersistentStore(/*reducer, initialState*/)
+const store = createStore(/*reducer, [initialState]*/, enhancer)
 ```
 
 ### persistState(paths, config)
