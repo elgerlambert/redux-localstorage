@@ -5,14 +5,14 @@ import actionTypes from './actionTypes.js';
  * has been dispatched. This action will be dispatched first, followed by
  * any queued actions in the order they were originally dispatched.
  */
-export default function bufferActions() {
+export default function bufferActions(type = actionTypes.INIT) {
   let buffer = true;
   let queue = [];
 
   return () => next => action => {
     if (!buffer) return next(action);
 
-    if (action.type === actionTypes.INIT) {
+    if (action.type === type) {
       buffer = false;
       next(action);
       queue.forEach(queuedAction => {
