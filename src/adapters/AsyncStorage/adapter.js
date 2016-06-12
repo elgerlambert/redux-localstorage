@@ -3,7 +3,7 @@ export default (storage) => ({
 
   put(key, value, callback) {
     try {
-      storage.setItem(key, JSON.stringify(value), callback);
+      storage.setItem(key, value, callback);
     } catch (e) {
       callback(e);
     }
@@ -13,7 +13,7 @@ export default (storage) => ({
     storage.getItem(key, (err, value) => {
       if (err) return callback(err);
       try {
-        callback(null, JSON.parse(value));
+        callback(null, value);
       } catch (e) {
         callback(e);
       }
