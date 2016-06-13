@@ -31,11 +31,12 @@ const storage = compose(
   filter('nested.key')
 )(adapter(window.localStorage));
 
-const createPersistentStore = compose(
+const enhancer = compose(
+  /* applyMiddleware(...middlewares) */
   persistState(storage, 'my-storage-key')
-)(createStore);
+);
 
-const store = createPersistentStore(reducer);
+const store = createStore(reducer /*, [initialState]*/, enhancer);
 ```
 ## API
 ### persistState([storage][, key][, callback])
@@ -43,7 +44,7 @@ const store = createPersistentStore(reducer);
 ```js
 type storage = Storage (Object)
 ```
-An object that provides ([enhanced](#enhancers)) methods for data persistence, retrieval and removal as put, get & del. Defaults to adapter(localStorage).
+An object that provides ([enhanced](#enhancers)) methods for data persistence, retrieval and removal as put, get & del. Defaults to adapter(window.localStorage).
 
 #### key
 ```js
@@ -76,6 +77,37 @@ const reducer = compose(
 
 **Note:** The `initialState` includes the default values specified by your reducers.
 
+### transformState([down], [up])
+A typical use-case for storage enhancers is to modify the state before it's persisted or retrieved, e.g. serialization, encryption or to filter out a subset. transformState is a storage enhancer that makes it easier to do so. 
+
+#### down
+```js
+type down = Function | Array<Function>
+```
+A function or an Array of functions that transform the state before it's persisted.
+ 
+#### up
+```js
+type up = Function | Array<Function>
+```
+A function or an Array of functions that transform the state directly after it's been retrieved.
+
+```js
+import adapter from 'redux-localstorage/lib/adapters/localStorage/adapter.js';
+
+const storage = compose(
+  transformState([
+    JSON.stringify,
+    btoa
+  ], [
+    atob,
+    JSON.parse
+  ])
+)(adapter(window.localStorage))
+``` 
+
+**Note:** transformState is applied internally to enhance storage adapters that require JSON serialization. If serialization is not the last step before persisting, as is the case in this encryption example, make sure you import the actual adapter.js (as opposed to index.js).
+
 ## Rehydration
 The use of `mergePersistedState` is optional. If you prefer to handle rehydration in your own reducer(s), you can. Listen for redux-localstorage's `INIT` action; it includes the persisted state as it's `payload`. For example:
 
@@ -103,7 +135,7 @@ storage = {
 A number of [adapters](#adapters) are provided to wrap existing storage API's so that they conform to these requirements. But you could create your own storage object and point these methods to any endpoint you like!
 
 ### adapters
-Redux-localstorage currently provides adapters for `localStorage`, `sessionStorage` and `AsyncStorage`. An adapter creates a thin wrapper that transforms a storage API so that it conforms to the stated requirements. The original storage object passed to an adapter can be accessed through `adapted[0]`; this provides you access to all the original storage methods when creating a storage enhancer.
+Redux-localstorage currently provides adapters for `localStorage`, `localForage`, `sessionStorage`, `AsyncStorage` and `levelDB`. An adapter creates a thin wrapper that transforms a storage API so that it conforms to the stated requirements. The original storage object passed to an adapter can be accessed through `adapted[0]`; this provides you access to all the original storage methods when creating a storage enhancer.
 
 ```js
 import {AsyncStorage} from 'react-native';
@@ -112,6 +144,7 @@ import adapter from 'redux-localstorage/lib/adapters/AsyncStorage';
 const storage = adapter(AsyncStorage);
 // storage[0] === AsyncStorage
 ```
+**Note:** the adapters for localStorage, sessionStorage, AsyncStorage & levelDB take care of JSON (de)serialization for you. If you just want the adapter without serialization you can access the `adapter.js` within the corresponding storage folder. See [transformState](#transformState) for an example.
 
 ### enhancers
 ```js
@@ -126,9 +159,10 @@ const storage = compose(
   yourOwnCustom(enhancer)
 )(adapter(window.localStorage));
 
-const createPersistentStore = compose(
+const enhancer = compose(
+  /* applyMiddleware(...middlewares) */
   persistState(storage, 'my-storage-key')
-)(createStore);
+);
 ```
 Check out the wiki for a [list of available storage enhancers](https://github.com/elgerlambert/redux-localstorage/wiki) and don't forget to add your own if you publish any!
 
