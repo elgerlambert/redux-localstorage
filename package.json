@@ -8,9 +8,8 @@
     "test": "make test"
   },
   "files": [
-    "lib/",
-    "package.json",
-    "README.md"
+    "lib",
+    "src"
   ],
   "repository": {
     "type": "git",
@@ -20,11 +19,12 @@
     "Redux",
     "Persist",
     "Immutable",
-    "local storage",
+    "storage",
     "localStorage",
     "sessionStorage",
     "AsyncStorage",
-    "PouchDB"
+    "localForage",
+    "LevelDB"
   ],
   "author": "Elger Lambert <elgerlambert@gmail.com>",
   "license": "MIT",
