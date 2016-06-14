@@ -144,7 +144,7 @@ import adapter from 'redux-localstorage/lib/adapters/AsyncStorage';
 const storage = adapter(AsyncStorage);
 // storage[0] === AsyncStorage
 ```
-**Note:** the adapters for localStorage, sessionStorage, AsyncStorage & levelDB take care of JSON (de)serialization for you. If you just want the adapter without serialization you can access the `adapter.js` within the corresponding storage folder. See [transformState](#transformState) for an example.
+**Note:** the adapters for localStorage, sessionStorage, AsyncStorage & levelDB take care of JSON (de)serialization for you. If you just want the adapter without serialization you can access the `adapter.js` within the corresponding storage folder. See [transformState](#transformstatedown-up) for an example.
 
 ### enhancers
 ```js
