@@ -12,7 +12,7 @@ npm install --save redux-localstorage
 
 ## Usage
 ```js
-import {compose, createStore} from 'redux';
+import {compose, createStore} from 'redux'
 import persistState from 'redux-localstorage'
 
 const enhancer = compose(
@@ -62,7 +62,7 @@ If, for example, you want to dynamically persist parts of your store state based
 paths.forEach((path) => {
   if (state[path].persistToLocalStorage)
     subset[path] = state[path]
-}
+})
 ```
 
 ## Immutable Data
@@ -88,3 +88,19 @@ type config.merge = (initialState: Collection, persistedState: Collection) => fi
 ```
 During initialization any persisted state is merged with the initialState passed in as an argument to `createStore`.
 The default strategy `extends` the initialState with the persistedState. Override this function if that doesn't work for you. **Note:** this is only required if you want to merge values within an immutable collection. If your values are immutable, but the object that holds them is not, the default strategy should work just fine.
+
+### Immutable.js
+```js
+const localStorageConfig = {
+  slicer: paths => state => (paths ? state.filter((v, k) => paths.indexOf(k) > -1) : state),
+  serialize: subset => JSON.stringify(subset.toJS()),
+  deserialize: serializedData => Immutable.fromJS(JSON.parse(serializedData)),
+  merge: (initialState, persistedState) => initialState.mergeDeep(persistedState),
+}
+
+const enhancer = compose(
+  /* [middlewares] */,
+  persistState(undefined, localStorageConfig),
+)
+```
+
