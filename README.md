@@ -166,5 +166,40 @@ const enhancer = compose(
 ```
 Check out the wiki for a [list of available storage enhancers](https://github.com/elgerlambert/redux-localstorage/wiki) and don't forget to add your own if you publish any!
 
+## Immutable
+
+By default redux-localstorage assumes your state is a plain JS object. If you are using [immutable.js](https://facebook.github.io/immutable-js/) to manage your state you can apply the merge and store enhancer functions provided by [redux-localstorage-immutable](https://www.npmjs.com/package/redux-localstorage-immutable) to enable `redux-localstorage` to understand your values.
+
+To use `redux-localstorage-immutable` with `redux-localstorage` pass the `deserialize` merge function to `mergePersistedState` and apply the `serialize` store enhancer to `compose` before any other store enhancers such as `filter`. 
+
+```
+import {compose, createStore} from 'redux';
+import rootReducer from './reducers';
+
+import persistState, {mergePersistedState} from 'redux-localstorage';
+import adapter from 'redux-localstorage/lib/adapters/localStorage';
+import filter from 'redux-localstorage-filter';
+
+import { serialize, deserialize } from 'redux-localstorage-immutable';
+
+const reducer = compose(
+  // apply deserialize from redux-localstorage-immutable
+  mergePersistedState(deserialize)
+)(rootReducer);
+
+const storage = compose(
+  // apply serialize from redux-localstorage-immutable
+  serialize,
+  filter('nested.key')
+)(adapter(window.localStorage));
+
+const enhancer = compose(
+  /* applyMiddleware(...middlewares) */
+  persistState(storage, 'my-storage-key')
+);
+
+const store = createStore(reducer /*, [initialState]*/, enhancer);
+```
+
 ## License
 MIT
