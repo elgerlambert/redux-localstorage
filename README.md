@@ -16,7 +16,7 @@ import {compose, createStore} from 'redux';
 import persistState from 'redux-localstorage'
 
 const enhancer = compose(
-  /* [middlewares] */,
+  /* [middlewares] */
   persistState(/*paths, config*/),
 )
 
