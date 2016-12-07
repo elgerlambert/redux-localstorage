@@ -13,7 +13,7 @@ export default function getSubset(obj, paths) {
 
   paths.forEach((key) => {
     let slice = obj[key]
-    if (slice) subset[key] = slice
+    if (slice!==undefined) subset[key] = slice
   })
 
   return subset
