@@ -24,6 +24,7 @@ export default function persistState(paths, config) {
     slicer: createSlicer,
     serialize: JSON.stringify,
     deserialize: JSON.parse,
+    storageProvider: {},
     ...config
   }
 
@@ -31,6 +32,7 @@ export default function persistState(paths, config) {
     key,
     merge,
     slicer,
+    storageProvider,
     serialize,
     deserialize
   } = cfg
@@ -41,30 +43,24 @@ export default function persistState(paths, config) {
       initialState = undefined
     }
 
-    let persistedState
-    let finalInitialState
-
-    try {
-      persistedState = deserialize(localStorage.getItem(key))
-      finalInitialState = merge(initialState, persistedState)
-    } catch (e) {
-      console.warn('Failed to retrieve initialize state from localStorage:', e)
-    }
-
-    const store = next(reducer, finalInitialState, enhancer)
+    const store = next(reducer, initialState, enhancer)
     const slicerFn = slicer(paths)
 
-    store.subscribe(function () {
-      const state = store.getState()
-      const subset = slicerFn(state)
-
+    store.subscribe(function() {
+      const state = store.getState();
+      const subset = slicerFn(state);
       try {
-        localStorage.setItem(key, serialize(subset))
+        storageProvider.setItem(key, serialize(subset)).then(() => {
+          storageProvider.getItem(key).then(resp => {
+            console.log(resp);
+          });
+        })
+
       } catch (e) {
         console.warn('Unable to persist state to localStorage:', e)
       }
     })
-
+    console.log(store);
     return store
   }
 }

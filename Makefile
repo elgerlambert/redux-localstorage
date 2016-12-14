@@ -1,12 +1,12 @@
 BIN=node_modules/.bin
 
-MOCHA_ARGS=	--compilers js:babel/register \
+MOCHA_ARGS=	--compilers js:babel-core/register \
 			--recursive
 
 MOCHA_TARGET=src/__tests__
 
 build:
-	$(BIN)/babel src --ignore __tests__ --out-dir lib
+	$(BIN)/babel --presets es2017 src --ignore __tests__ --out-dir lib
 
 clean:
 	rm -rf lib

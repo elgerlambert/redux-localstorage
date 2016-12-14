@@ -11,13 +11,13 @@ import typeOf from './util/typeOf.js'
  */
 export default function createSlicer(paths) {
   switch (typeOf(paths)) {
-    case 'void':
+    case 'undefined':
       return (state) => state
     case 'string':
       return (state) => getSubset(state, [paths])
     case 'array':
       return (state) => getSubset(state, paths)
     default:
-      return console.error('Invalid paths argument, should be of type String, Array or Void')
+      return (state) => state
   }
 }
