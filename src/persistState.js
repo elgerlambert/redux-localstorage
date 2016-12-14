@@ -43,37 +43,24 @@ export default function persistState(paths, config) {
       initialState = undefined
     }
 
-    let persistedState
-    let finalInitialState
-    const store = next(reducer, finalInitialState, enhancer)
-return store;
+    const store = next(reducer, initialState, enhancer)
+    const slicerFn = slicer(paths)
 
-    storageProvider.getItem(key).then( persisted => {
-
-        persistedState = deserialize(persisted);
-        console.log('persistedState😚');
-        console.log(persistedState);
-        finalInitialState = merge(initialState, persistedState)
-
-        const store = next(reducer, finalInitialState, enhancer)
-        console.log('finalInitialState');
-        console.log(finalInitialState);
-        const slicerFn = slicer(paths)
-
-        store.subscribe(function () {
-          const state = store.getState();
-          const subset = slicerFn(state);
-            try {
-              storageProvider.setItem(key, serialize(subset))
-              console.log("redux-localstorage 😚");
-              console.log(state);
-            } catch (e) {
-              console.warn('Unable to persist state to localStorage:', e)
-            }
+    store.subscribe(function() {
+      const state = store.getState();
+      const subset = slicerFn(state);
+      try {
+        storageProvider.setItem(key, serialize(subset)).then(() => {
+          storageProvider.getItem(key).then(resp => {
+            console.log(resp);
+          });
         })
-        console.log("store");
-        console.log(store);
-        return store
-    });
+
+      } catch (e) {
+        console.warn('Unable to persist state to localStorage:', e)
+      }
+    })
+    console.log(store);
+    return store
   }
 }
