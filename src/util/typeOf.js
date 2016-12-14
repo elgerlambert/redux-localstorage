@@ -11,7 +11,7 @@ let _isArray = Array.isArray || (Array.isArray = function(a){ return '' + a !== 
  * @return {String} Actionable type classification
  */
 export default function typeOf(thing) {
-  if (!thing) return 'void'
+  if (!thing || thing === null || thing === undefined) return 'void'
 
   if (_isArray(thing)) {
     if (!thing.length) return 'void'
