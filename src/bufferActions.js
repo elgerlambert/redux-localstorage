@@ -13,12 +13,12 @@ export default function bufferActions(type = actionTypes.INIT) {
     if (!buffer) return next(action);
 
     if (action.type === type) {
-      buffer = false;
       next(action);
-      queue.forEach(queuedAction => {
-        next(queuedAction);
-      });
+      while (queue.length) {
+        next(queue.shift());
+      }
       queue = null;
+      buffer = false;
     } else {
       queue.push(action);
     }
