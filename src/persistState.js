@@ -36,6 +36,11 @@ export default function persistState(paths, config) {
   } = cfg
 
   return next => (reducer, initialState, enhancer) => {
+    
+    if (typeof localStorage === 'undefined') {
+      return next(reducer, initialState, enhancer)
+    }
+    
     if (typeof initialState === 'function' && typeof enhancer === 'undefined') {
       enhancer = initialState
       initialState = undefined
