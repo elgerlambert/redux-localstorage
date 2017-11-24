@@ -58,6 +58,10 @@ export default function persistState(paths, config) {
       const state = store.getState()
       const subset = slicerFn(state)
 
+      if (subset === undefined) {
+        return
+      }
+
       try {
         localStorage.setItem(key, serialize(subset))
       } catch (e) {
