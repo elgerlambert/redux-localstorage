@@ -24,6 +24,7 @@ export default function persistState(paths, config) {
     slicer: createSlicer,
     serialize: JSON.stringify,
     deserialize: JSON.parse,
+    storage: localStorage,
     ...config
   }
 
@@ -41,6 +42,7 @@ export default function persistState(paths, config) {
       initialState = undefined
     }
 
+    const localStorage = cfg.storage;
     let persistedState
     let finalInitialState
 
