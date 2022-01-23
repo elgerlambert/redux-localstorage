@@ -1,7 +1,7 @@
 redux-localstorage
 ==================
 
-Store enhancer that syncs (a subset) of your Redux store state to localstorage.
+Store enhancer that syncs (a subset of) your Redux store state to localStorage.
 
 **NOTE:** Be sure to check out the [1.0-breaking-changes](https://github.com/elgerlambert/redux-localstorage/tree/1.0-breaking-changes) branch (available on npm as `redux-localstorage@rc`). It includes support for flexible storage backends, including (but not limited to) `sessionStorage` and react-natives' `AsyncStorage`.
 
